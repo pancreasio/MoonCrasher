@@ -94,7 +94,7 @@ public class Player : MonoBehaviour
 
     private void CheckAngle()
     {
-        if (transform.eulerAngles.z<maxLandingAngle || transform.eulerAngles.z > 180)
+        if (transform.eulerAngles.z < maxLandingAngle || transform.eulerAngles.z > 180)
         {
             if (transform.eulerAngles.z > minLandingAngle || transform.eulerAngles.z < 180)
             {

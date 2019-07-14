@@ -9,7 +9,7 @@ public class LevelManager : MonoBehaviour
     public float maxXOffset, maxYOffset, minXOffset, minYOffset;
     private EdgeCollider2D edgeCollider;
     private List<Vector2> pointList;
-    private bool baseSpawned;
+    private bool baseSpawned, paused;
     private int points;
     private void Start()
     {
@@ -35,6 +35,7 @@ public class LevelManager : MonoBehaviour
         }
         edgeCollider = lineRenderer.gameObject.AddComponent<EdgeCollider2D>();
         edgeCollider.points = pointList.ToArray();
+        paused = false;
     }
 
     private Vector2 generatePoint(Vector2 previousPoint)
@@ -42,16 +43,17 @@ public class LevelManager : MonoBehaviour
         int failsafe = 0;
         Vector2 newPoint = new Vector2();
         newPoint.x = Random.Range(previousPoint.x + minXOffset, previousPoint.x + maxXOffset);
-        if (!baseSpawned && Random.Range(0, 100) > 80)
+        if (!baseSpawned && Random.Range(0, 100) > 90)
         {
             newPoint.y = previousPoint.y;
+            newPoint.x = previousPoint.x + maxXOffset;
             baseSpawned = true;
         }
         else
         {
             newPoint.y = Random.Range(previousPoint.y - minYOffset, previousPoint.y + maxYOffset);
 
-            while (newPoint.y > minY.transform.position.y && newPoint.y < maxY.transform.position.y && failsafe < 10)
+            while (newPoint.y > minY.transform.position.y && newPoint.y < maxY.transform.position.y && failsafe < 40)
             {
                 newPoint.y = Random.Range(previousPoint.y - minYOffset, previousPoint.y + maxYOffset);
                 failsafe++;
@@ -62,6 +64,19 @@ public class LevelManager : MonoBehaviour
 
     private void Update()
     {
+        if (Input.GetKeyDown(KeyCode.V))
+        {
+            paused = !paused;
+        }
+
+        if (paused)
+        {
+            Time.timeScale = 0;
+        }
+        else
+        {
+            Time.timeScale = 1;
+        }
 
     }
 }
