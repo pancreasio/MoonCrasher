@@ -1,11 +1,15 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class LevelManager : MonoBehaviour
 {
+    private GameManager gameManager;
     public LineRenderer lineRenderer;
     public GameObject minX, maxX, minY, maxY;
+    public Canvas pauseCanvas;
+    public Button pauseButton;
     public float maxXOffset, maxYOffset, minXOffset, minYOffset;
     private EdgeCollider2D edgeCollider;
     private List<Vector2> pointList;
@@ -14,6 +18,7 @@ public class LevelManager : MonoBehaviour
     public static int score;
     private void Start()
     {
+        gameManager = GameObject.Find("Game Manager").GetComponent<GameManager>();
         pointList = new List<Vector2>();
         pointList.Clear();
         points = 0;
@@ -38,6 +43,7 @@ public class LevelManager : MonoBehaviour
         edgeCollider.points = pointList.ToArray();
         paused = false;
         score = 0;
+        pauseCanvas.gameObject.SetActive(false);
     }
 
     private Vector2 generatePoint(Vector2 previousPoint)
@@ -69,6 +75,8 @@ public class LevelManager : MonoBehaviour
         if (paused)
         {
             Time.timeScale = 0;
+            pauseCanvas.gameObject.SetActive(true);
+            pauseButton.gameObject.SetActive(false);
         }
         else
         {
@@ -79,6 +87,13 @@ public class LevelManager : MonoBehaviour
 
     public void Pause()
     {
+        pauseButton.gameObject.SetActive(!pauseButton.gameObject.activeSelf);
+        pauseCanvas.gameObject.SetActive(!pauseCanvas.gameObject.activeSelf);
         paused = !paused;
+    }
+
+    public void Menu()
+    {
+        gameManager.Menu();
     }
 }
