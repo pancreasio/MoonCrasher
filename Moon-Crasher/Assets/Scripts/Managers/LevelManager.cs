@@ -11,6 +11,7 @@ public class LevelManager : MonoBehaviour
     private List<Vector2> pointList;
     private bool baseSpawned, paused;
     private int points;
+    public static int score;
     private void Start()
     {
         pointList = new List<Vector2>();
@@ -36,6 +37,7 @@ public class LevelManager : MonoBehaviour
         edgeCollider = lineRenderer.gameObject.AddComponent<EdgeCollider2D>();
         edgeCollider.points = pointList.ToArray();
         paused = false;
+        score = 0;
     }
 
     private Vector2 generatePoint(Vector2 previousPoint)
@@ -64,11 +66,6 @@ public class LevelManager : MonoBehaviour
 
     private void Update()
     {
-        if (Input.GetKeyDown(KeyCode.V))
-        {
-            paused = !paused;
-        }
-
         if (paused)
         {
             Time.timeScale = 0;
@@ -78,5 +75,10 @@ public class LevelManager : MonoBehaviour
             Time.timeScale = 1;
         }
 
+    }
+
+    public void Pause()
+    {
+        paused = !paused;
     }
 }

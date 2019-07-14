@@ -2,15 +2,18 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
+
 
 public class Player : MonoBehaviour
 {
-    public float rotationSpeed, movementSpeed, boostSpeed, maxLandingAngle, minLandingAngle, maxLandingSpeed;
+    public float fuel, rotationSpeed, movementSpeed, boostSpeed, maxLandingAngle, minLandingAngle, maxLandingSpeed;
+    private float altitude, elapsedTime;
+    public Text altText, hVelocityText, vVelocityText, fuelText, scoreText, timeText;
     private Rigidbody2D rig;
     private GameManager gameManager;
-    private Vector2 maxX, minX, maxY;
-    private bool boost;
-    private bool landed;
+    private Vector2 maxX, minX, maxY, minY;
+    private bool boost, landed;
 
     private void Start()
     {
@@ -18,13 +21,16 @@ public class Player : MonoBehaviour
         maxX = GameObject.Find("MaxX").transform.position;
         minX = GameObject.Find("MinX").transform.position;
         maxY = GameObject.Find("Player MaxY").transform.position;
+        minY = GameObject.Find("MinY").transform.position;
         rig = GetComponent<Rigidbody2D>();
         boost = true;
         landed = false;
+        elapsedTime = 0;
     }
 
     private void Update()
     {
+        elapsedTime += Time.deltaTime;
         if (Input.GetKey(KeyCode.RightArrow))
         {
             transform.Rotate(Vector3.forward * -rotationSpeed * Time.deltaTime);
@@ -33,9 +39,10 @@ public class Player : MonoBehaviour
         {
             transform.Rotate(Vector3.forward * rotationSpeed * Time.deltaTime);
         }
-        if (Input.GetKey(KeyCode.UpArrow))
+        if (Input.GetKey(KeyCode.UpArrow) && fuel>0)
         {
             rig.AddForce(transform.up * movementSpeed * Time.deltaTime);
+            fuel -= Time.deltaTime;
         }
         if (Input.GetKey(KeyCode.Space) && boost)
         {
@@ -61,6 +68,16 @@ public class Player : MonoBehaviour
         {
             gameManager.GameOver();
         }
+
+        altitude = transform.position.y - minY.y;
+        LevelManager.score = Mathf.RoundToInt(fuel * 10 - elapsedTime * 100); 
+
+        fuelText.text = "Fuel: " + Mathf.Round(fuel) + "Lt";
+        vVelocityText.text = "Vertical Velocity: " +Mathf.Round(Mathf.Abs(rig.velocity.y* 100)).ToString() + "Km/H";
+        hVelocityText.text = "Horizontal Velocity: " + Mathf.Round(Mathf.Abs(rig.velocity.x * 100)).ToString() + "Km/H";
+        altText.text = "Altitude: " +Mathf.Round(altitude * 10).ToString() + "M";
+        scoreText.text = "Score: " + LevelManager.score.ToString() + " AP$";
+        timeText.text = "Time:" + Mathf.Round(elapsedTime).ToString()+ "s";
     }
 
     private void Explode()
