@@ -7,7 +7,7 @@ using UnityEngine.UI;
 
 public class Player : MonoBehaviour
 {
-    public float fuel, rotationSpeed, movementSpeed, boostSpeed, maxLandingAngle, minLandingAngle, maxLandingSpeed;
+    public float fuel, rotationSpeed, movementSpeed, boostSpeed, maxLandingAngle, minLandingAngle, maxLandingSpeed, initialForce;
     private float altitude, elapsedTime;
     public Text altText, hVelocityText, vVelocityText, fuelText, scoreText, timeText;
     private Rigidbody2D rig;
@@ -26,6 +26,7 @@ public class Player : MonoBehaviour
         boost = true;
         landed = false;
         elapsedTime = 0;
+        rig.AddForce(transform.right * initialForce);
     }
 
     private void Update()
@@ -70,7 +71,7 @@ public class Player : MonoBehaviour
         }
 
         altitude = transform.position.y - minY.y;
-        LevelManager.score = Mathf.RoundToInt(fuel * 10 - elapsedTime * 100); 
+        LevelManager.score = Mathf.RoundToInt(fuel * 100 - elapsedTime * 10); 
 
         fuelText.text = "Fuel: " + Mathf.Round(fuel) + "Lt";
         vVelocityText.text = "Vertical Velocity: " +Mathf.Round(Mathf.Abs(rig.velocity.y* 100)).ToString() + "Km/H";
