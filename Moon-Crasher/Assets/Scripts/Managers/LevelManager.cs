@@ -8,16 +8,17 @@ public class LevelManager : MonoBehaviour
     private GameManager gameManager;
     public LineRenderer lineRenderer;
     public GameObject minX, maxX, minY, maxY;
-    public Canvas mainCanvas, pauseCanvas, endCanvas;
+    public Canvas mainCanvas, pauseCanvas, endCanvas, loadCanvas;
     public Button pauseButton;
-    public Text scoreText;
+    public Text scoreText, loadText;
     public float maxXOffset, maxYOffset, minXOffset, minYOffset;
     private EdgeCollider2D edgeCollider;
     private List<Vector2> pointList;
     private bool baseSpawned, paused;
     private int points;
     public static int score;
-    private bool levelEnded;
+    private bool levelEnded, loading;
+    private float fakePercentage;
 
     private void Start()
     {
@@ -50,6 +51,8 @@ public class LevelManager : MonoBehaviour
         endCanvas.gameObject.SetActive(false);
         Time.timeScale = 1;
         levelEnded = false;
+        loading = false;
+        fakePercentage = 0;
     }
 
     private Vector2 generatePoint(Vector2 previousPoint)
@@ -93,6 +96,17 @@ public class LevelManager : MonoBehaviour
                 Time.timeScale = 1;
             }
         }
+
+        if (loading)
+        {
+            Time.timeScale = 1;
+            fakePercentage += Time.deltaTime * 50;
+            loadText.text = "Loading: " + Mathf.Round(fakePercentage).ToString() + "%";
+            if (fakePercentage >= 100)
+            {
+                gameManager.Retry();
+            }
+        }
     }
 
     public void Pause()
@@ -109,7 +123,7 @@ public class LevelManager : MonoBehaviour
 
     public void NextLevel()
     {
-        gameManager.Retry();
+        FakeLoad();
     }
 
     public void GameOver()
@@ -124,5 +138,11 @@ public class LevelManager : MonoBehaviour
         mainCanvas.gameObject.SetActive(false);
         endCanvas.gameObject.SetActive(true);
         scoreText.text = "Score: " + GameManager.score.ToString();
+    }
+
+    public void FakeLoad()
+    {
+        loadCanvas.gameObject.SetActive(true);
+        loading = true;
     }
 }
