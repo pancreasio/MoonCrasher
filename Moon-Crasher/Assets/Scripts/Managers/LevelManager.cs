@@ -48,7 +48,6 @@ public class LevelManager : MonoBehaviour
 
     private Vector2 generatePoint(Vector2 previousPoint)
     {
-        int failsafe = 0;
         Vector2 newPoint = new Vector2();
         newPoint.x = Random.Range(previousPoint.x + minXOffset, previousPoint.x + maxXOffset);
         if (!baseSpawned && Random.Range(0, 100) > 90)
@@ -61,10 +60,13 @@ public class LevelManager : MonoBehaviour
         {
             newPoint.y = Random.Range(previousPoint.y - minYOffset, previousPoint.y + maxYOffset);
 
-            while (newPoint.y > minY.transform.position.y && newPoint.y < maxY.transform.position.y && failsafe < 40)
+            if(newPoint.y < minY.transform.position.y)
             {
-                newPoint.y = Random.Range(previousPoint.y - minYOffset, previousPoint.y + maxYOffset);
-                failsafe++;
+                newPoint.y = Random.Range(minY.transform.position.y, previousPoint.y + maxYOffset);
+            }
+            if (newPoint.y > maxY.transform.position.y)
+            {
+                newPoint.y = Random.Range(previousPoint.y - minYOffset , maxY.transform.position.y);
             }
         }
         return newPoint;
