@@ -7,9 +7,11 @@ using UnityEngine.UI;
 
 public class Player : MonoBehaviour
 {
-    public float fuel, rotationSpeed, movementSpeed, boostSpeed, maxLandingAngle, minLandingAngle, maxLandingSpeed, initialForce;
+    public float fuel, rotationSpeed, movementSpeed, boostSpeed, maxLandingAngle, minLandingAngle, maxLandingSpeed, initialForce, landingCameraOffset;
     private float altitude, elapsedTime;
     public Text altText, hVelocityText, vVelocityText, fuelText, scoreText, timeText;
+    public Camera mainCam, landingCam;
+    public LayerMask terrainMask;
     private Rigidbody2D rig;
     private GameManager gameManager;
     private Vector2 maxX, minX, maxY, minY;
@@ -40,7 +42,7 @@ public class Player : MonoBehaviour
         {
             transform.Rotate(Vector3.forward * rotationSpeed * Time.deltaTime);
         }
-        if (Input.GetKey(KeyCode.UpArrow) && fuel>0)
+        if (Input.GetKey(KeyCode.UpArrow) && fuel > 0)
         {
             rig.AddForce(transform.up * movementSpeed * Time.deltaTime);
             fuel -= Time.deltaTime;
@@ -70,16 +72,38 @@ public class Player : MonoBehaviour
             gameManager.GameOver();
         }
 
+        CheckAltitude();
+
         altitude = transform.position.y - minY.y;
-        LevelManager.score = Mathf.RoundToInt(fuel * 100 - elapsedTime * 10); 
+        LevelManager.score = Mathf.RoundToInt(fuel * 100 - elapsedTime * 10);
+        Debug.DrawRay(transform.position, Vector3.down* 1000);
 
         fuelText.text = "Fuel: " + Mathf.Round(fuel) + "Lt";
-        vVelocityText.text = "Vertical Velocity: " +Mathf.Round(Mathf.Abs(rig.velocity.y* 100)).ToString() + "Km/H";
+        vVelocityText.text = "Vertical Velocity: " + Mathf.Round(Mathf.Abs(rig.velocity.y * 100)).ToString() + "Km/H";
         hVelocityText.text = "Horizontal Velocity: " + Mathf.Round(Mathf.Abs(rig.velocity.x * 100)).ToString() + "Km/H";
-        altText.text = "Altitude: " +Mathf.Round(altitude * 10).ToString() + "M";
+        altText.text = "Altitude: " + Mathf.Round(altitude * 10).ToString() + "M";
         scoreText.text = "Score: " + LevelManager.score.ToString() + " AP$";
-        timeText.text = "Time:" + Mathf.Round(elapsedTime).ToString()+ "s";
+        timeText.text = "Time:" + Mathf.Round(elapsedTime).ToString() + "s";
     }
+
+    private void CheckAltitude()
+    {
+
+        RaycastHit2D hit = Physics2D.Raycast(transform.position, Vector3.down, landingCameraOffset, terrainMask);
+        if (hit)
+        {
+            landingCam.gameObject.SetActive(true);
+            landingCam.transform.rotation = Quaternion.identity;
+            mainCam.gameObject.SetActive(false);
+        }
+        else
+        {
+            landingCam.gameObject.SetActive(false);
+            mainCam.gameObject.SetActive(true);
+        }
+
+    }
+
 
     private void Explode()
     {
