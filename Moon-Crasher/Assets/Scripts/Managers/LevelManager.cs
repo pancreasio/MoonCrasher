@@ -23,6 +23,7 @@ public class LevelManager : MonoBehaviour
     private void Start()
     {
         gameManager = GameObject.Find("Game Manager").GetComponent<GameManager>();
+        Player.whenDestroyed = WhenPlayerDestroyed;
         pointList = new List<Vector2>();
         pointList.Clear();
         points = 0;
@@ -159,5 +160,10 @@ public class LevelManager : MonoBehaviour
     {
         loadCanvas.gameObject.SetActive(true);
         loading = true;
+    }
+
+    private void WhenPlayerDestroyed()
+    {
+        LevelEnded(false);
     }
 }

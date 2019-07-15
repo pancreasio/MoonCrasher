@@ -18,6 +18,9 @@ public class Player : MonoBehaviour
     private Vector2 maxX, minX, maxY, minY;
     private bool boost, landed, thrust;
     private int score;
+    public  delegate void OnDestroyAction();
+    public static OnDestroyAction whenDestroyed;
+    
 
     private void Start()
     {
@@ -124,7 +127,7 @@ public class Player : MonoBehaviour
 
     private void Explode()
     {
-        levelManager.LevelEnded(false);
+        whenDestroyed();
         landingCam.gameObject.SetActive(false);
         mainCam.gameObject.SetActive(true);
         Destroy(this.gameObject);
