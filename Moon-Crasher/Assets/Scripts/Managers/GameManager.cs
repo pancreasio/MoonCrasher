@@ -28,7 +28,6 @@ public class GameManager : MonoBehaviour
         {
             score = 0;
         }
-        Debug.Log(score);
     }
     public void Menu()
     {

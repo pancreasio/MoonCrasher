@@ -8,14 +8,15 @@ using UnityEngine.UI;
 public class Player : MonoBehaviour
 {
     public float fuel, rotationSpeed, movementSpeed, boostSpeed, maxLandingAngle, minLandingAngle, maxLandingSpeed, initialForce, landingCameraOffset;
-    private float altitude, elapsedTime;
+    private float altitude, elapsedTime, thrusterEmission;
     public Text altText, hVelocityText, vVelocityText, fuelText, scoreText, timeText;
     public Camera mainCam, landingCam;
+    public ParticleSystem thrusters;
     public LayerMask terrainMask;
     private Rigidbody2D rig;
     private LevelManager levelManager;
     private Vector2 maxX, minX, maxY, minY;
-    private bool boost, landed;
+    private bool boost, landed, thrust;
     private int score;
 
     private void Start()
@@ -31,6 +32,8 @@ public class Player : MonoBehaviour
         landed = false;
         elapsedTime = 0;
         rig.AddForce(transform.right * initialForce);
+        thrusters.Stop();
+        thrust = false;
     }
 
     private void Update()
@@ -46,9 +49,20 @@ public class Player : MonoBehaviour
         }
         if (Input.GetKey(KeyCode.UpArrow) && fuel > 0)
         {
+            if (thrust)
+            {
+                thrusters.Play();
+                thrust = false;
+            }
             rig.AddForce(transform.up * movementSpeed * Time.deltaTime);
             fuel -= Time.deltaTime;
         }
+        else
+        {
+            thrusters.Stop();
+            thrust = true;
+        }
+
         if (Input.GetKey(KeyCode.Space) && boost)
         {
             rig.AddForce(transform.up * boostSpeed, ForceMode2D.Impulse);
