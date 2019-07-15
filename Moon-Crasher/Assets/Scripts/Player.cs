@@ -152,6 +152,29 @@ public class Player : MonoBehaviour
                 Explode();
             }
         }
+        if (collision.transform.tag == "Bomber")
+        {
+            if (boost)
+            {
+                Explode();
+            }
+            else
+            {
+                Bounds shipBounds = GetComponent<Collider2D>().bounds;
+                Vector3 shipPosition = transform.position;
+
+                Vector2 rayPos = new Vector3(shipPosition.x, shipBounds.max.y);
+                RaycastHit2D hitBomber = Physics2D.Raycast(rayPos, transform.up);
+                if (hitBomber)
+                {
+                    landed = true;
+                }
+                else
+                {
+                    Explode();
+                }
+            }
+        }
     }
 
     private void CheckAngle()

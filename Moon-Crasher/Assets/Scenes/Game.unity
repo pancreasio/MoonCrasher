@@ -6701,6 +6701,7 @@ MonoBehaviour:
   maxX: {fileID: 2055915990}
   minY: {fileID: 1222725855}
   maxY: {fileID: 426656679}
+  bomber: {fileID: 7034591799308869691, guid: 9c323c964d423894b9b207206517b295, type: 3}
   mainCanvas: {fileID: 201439316}
   pauseCanvas: {fileID: 643871196}
   endCanvas: {fileID: 545617030}

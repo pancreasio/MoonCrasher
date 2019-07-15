@@ -7,7 +7,7 @@ public class LevelManager : MonoBehaviour
 {
     private GameManager gameManager;
     public LineRenderer lineRenderer;
-    public GameObject minX, maxX, minY, maxY;
+    public GameObject minX, maxX, minY, maxY, bomber;
     public Canvas mainCanvas, pauseCanvas, endCanvas, loadCanvas;
     public Button pauseButton, retryButton, nextButton;
     public Text scoreText, loadText, wonText, lostText;
@@ -43,6 +43,10 @@ public class LevelManager : MonoBehaviour
             lineRenderer.SetPosition(points, new Vector2(maxX.transform.position.x, lineRenderer.GetPosition(points - 1).y));
             pointList.Add(lineRenderer.GetPosition(points - 1));
         }
+        int bomberPoint = Random.Range(0,pointList.Count);
+        Vector2 newPosition = new Vector2(pointList.ToArray()[bomberPoint].x, pointList.ToArray()[bomberPoint].y);
+        Instantiate(bomber, newPosition, Quaternion.identity);
+
         edgeCollider = lineRenderer.gameObject.AddComponent<EdgeCollider2D>();
         edgeCollider.points = pointList.ToArray();
         paused = false;
