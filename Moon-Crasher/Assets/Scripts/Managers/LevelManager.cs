@@ -8,14 +8,17 @@ public class LevelManager : MonoBehaviour
     private GameManager gameManager;
     public LineRenderer lineRenderer;
     public GameObject minX, maxX, minY, maxY;
-    public Canvas pauseCanvas;
+    public Canvas mainCanvas, pauseCanvas, endCanvas;
     public Button pauseButton;
+    public Text scoreText;
     public float maxXOffset, maxYOffset, minXOffset, minYOffset;
     private EdgeCollider2D edgeCollider;
     private List<Vector2> pointList;
     private bool baseSpawned, paused;
     private int points;
     public static int score;
+    private bool levelEnded;
+
     private void Start()
     {
         gameManager = GameObject.Find("Game Manager").GetComponent<GameManager>();
@@ -44,6 +47,9 @@ public class LevelManager : MonoBehaviour
         paused = false;
         score = 0;
         pauseCanvas.gameObject.SetActive(false);
+        endCanvas.gameObject.SetActive(false);
+        Time.timeScale = 1;
+        levelEnded = false;
     }
 
     private Vector2 generatePoint(Vector2 previousPoint)
@@ -60,13 +66,13 @@ public class LevelManager : MonoBehaviour
         {
             newPoint.y = Random.Range(previousPoint.y - minYOffset, previousPoint.y + maxYOffset);
 
-            if(newPoint.y < minY.transform.position.y)
+            if (newPoint.y < minY.transform.position.y)
             {
                 newPoint.y = Random.Range(minY.transform.position.y, previousPoint.y + maxYOffset);
             }
             if (newPoint.y > maxY.transform.position.y)
             {
-                newPoint.y = Random.Range(previousPoint.y - minYOffset , maxY.transform.position.y);
+                newPoint.y = Random.Range(previousPoint.y - minYOffset, maxY.transform.position.y);
             }
         }
         return newPoint;
@@ -82,9 +88,11 @@ public class LevelManager : MonoBehaviour
         }
         else
         {
-            Time.timeScale = 1;
+            if (!levelEnded)
+            {
+                Time.timeScale = 1;
+            }
         }
-
     }
 
     public void Pause()
@@ -97,5 +105,24 @@ public class LevelManager : MonoBehaviour
     public void Menu()
     {
         gameManager.Menu();
+    }
+
+    public void NextLevel()
+    {
+        gameManager.Retry();
+    }
+
+    public void GameOver()
+    {
+        gameManager.GameOver();
+    }
+
+    public void LevelEnded()
+    {
+        Time.timeScale = 0;
+        levelEnded = true;
+        mainCanvas.gameObject.SetActive(false);
+        endCanvas.gameObject.SetActive(true);
+        scoreText.text = "Score: " + GameManager.score.ToString();
     }
 }

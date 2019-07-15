@@ -13,13 +13,15 @@ public class Player : MonoBehaviour
     public Camera mainCam, landingCam;
     public LayerMask terrainMask;
     private Rigidbody2D rig;
-    private GameManager gameManager;
+    private LevelManager levelManager;
     private Vector2 maxX, minX, maxY, minY;
     private bool boost, landed;
+    private int score;
 
     private void Start()
     {
-        gameManager = GameObject.Find("Game Manager").GetComponent<GameManager>();
+        score = GameManager.score;
+        levelManager = GameObject.Find("Level Manager").GetComponent<LevelManager>();
         maxX = GameObject.Find("MaxX").transform.position;
         minX = GameObject.Find("MinX").transform.position;
         maxY = GameObject.Find("Player MaxY").transform.position;
@@ -69,20 +71,21 @@ public class Player : MonoBehaviour
 
         if (landed)
         {
-            gameManager.GameOver();
+            GameManager.score += Mathf.RoundToInt(fuel * 100 - elapsedTime * 10);
+            levelManager.LevelEnded();
+            landed = false;
         }
 
         CheckAltitude();
 
         altitude = transform.position.y - minY.y;
-        LevelManager.score = Mathf.RoundToInt(fuel * 100 - elapsedTime * 10);
-        Debug.DrawRay(transform.position, Vector3.down* 1000);
+        score = GameManager.score + Mathf.RoundToInt(fuel * 100 - elapsedTime * 10);
 
         fuelText.text = "Fuel: " + Mathf.Round(fuel) + "Lt";
         vVelocityText.text = "Vertical Velocity: " + Mathf.Round(Mathf.Abs(rig.velocity.y * 100)).ToString() + "Km/H";
         hVelocityText.text = "Horizontal Velocity: " + Mathf.Round(Mathf.Abs(rig.velocity.x * 100)).ToString() + "Km/H";
         altText.text = "Altitude: " + Mathf.Round(altitude * 10).ToString() + "M";
-        scoreText.text = "Score: " + LevelManager.score.ToString() + " AP$";
+        scoreText.text = "Score: " + score.ToString() + " AP$";
         timeText.text = "Time:" + Mathf.Round(elapsedTime).ToString() + "s";
     }
 
@@ -107,7 +110,7 @@ public class Player : MonoBehaviour
 
     private void Explode()
     {
-        Destroy(this.gameObject);
+        levelManager.GameOver();
     }
 
     private void OnCollisionEnter2D(Collision2D collision)

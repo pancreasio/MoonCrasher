@@ -28,6 +28,7 @@ public class GameManager : MonoBehaviour
         {
             score = 0;
         }
+        Debug.Log(score);
     }
     public void Menu()
     {
@@ -37,6 +38,7 @@ public class GameManager : MonoBehaviour
     public void Game()
     {
         SceneManager.LoadScene(2);
+        score = 0;
     }
 
     public void GameOver()
@@ -52,5 +54,10 @@ public class GameManager : MonoBehaviour
     public void ExitGame()
     {
         Application.Quit();
+    }
+
+    internal void Retry()
+    {
+        SceneManager.LoadScene(2);
     }
 }
