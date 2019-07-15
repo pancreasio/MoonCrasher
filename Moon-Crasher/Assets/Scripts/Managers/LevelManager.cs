@@ -9,8 +9,8 @@ public class LevelManager : MonoBehaviour
     public LineRenderer lineRenderer;
     public GameObject minX, maxX, minY, maxY;
     public Canvas mainCanvas, pauseCanvas, endCanvas, loadCanvas;
-    public Button pauseButton;
-    public Text scoreText, loadText;
+    public Button pauseButton, retryButton, nextButton;
+    public Text scoreText, loadText, wonText, lostText;
     public float maxXOffset, maxYOffset, minXOffset, minYOffset;
     private EdgeCollider2D edgeCollider;
     private List<Vector2> pointList;
@@ -100,9 +100,9 @@ public class LevelManager : MonoBehaviour
         if (loading)
         {
             Time.timeScale = 1;
-            fakePercentage += Time.deltaTime * 50;
+            fakePercentage += Time.deltaTime * 100;
             loadText.text = "Loading: " + Mathf.Round(fakePercentage).ToString() + "%";
-            if (fakePercentage >= 100)
+            if (fakePercentage >= 99)
             {
                 gameManager.Retry();
             }
@@ -131,12 +131,23 @@ public class LevelManager : MonoBehaviour
         gameManager.GameOver();
     }
 
-    public void LevelEnded()
+    public void LevelEnded(bool won)
     {
         Time.timeScale = 0;
         levelEnded = true;
         mainCanvas.gameObject.SetActive(false);
         endCanvas.gameObject.SetActive(true);
+        if (won)
+        {
+            wonText.gameObject.SetActive(true);
+            nextButton.gameObject.SetActive(true);
+        }
+        else
+        {
+            lostText.gameObject.SetActive(true);
+            retryButton.gameObject.SetActive(true);
+            GameManager.score = 0;
+        }
         scoreText.text = "Score: " + GameManager.score.ToString();
     }
 

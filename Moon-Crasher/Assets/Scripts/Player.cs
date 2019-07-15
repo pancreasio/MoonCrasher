@@ -86,7 +86,7 @@ public class Player : MonoBehaviour
         if (landed)
         {
             GameManager.score += Mathf.RoundToInt(fuel * 100 - elapsedTime * 10);
-            levelManager.LevelEnded();
+            levelManager.LevelEnded(true);
             landed = false;
         }
 
@@ -124,7 +124,10 @@ public class Player : MonoBehaviour
 
     private void Explode()
     {
-        levelManager.GameOver();
+        levelManager.LevelEnded(false);
+        landingCam.gameObject.SetActive(false);
+        mainCam.gameObject.SetActive(true);
+        Destroy(this.gameObject);
     }
 
     private void OnCollisionEnter2D(Collision2D collision)
